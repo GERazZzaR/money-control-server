@@ -7,6 +7,7 @@ const Transaction = require("../models/transaction");
 const Category = require("../models/category");
 const mongoose = require('mongoose');
 const history = require('connect-history-api-fallback');
+const connection = require('../credentials')
 
 const app = express()
 app.use(morgan('combined'))
@@ -14,7 +15,7 @@ app.use(bodyParser.json())
 app.use(cors())
 app.use(history());
 
-mongoose.connect('mongodb+srv://julianscheiner:2t1z3i9o@cluster0-m07la.mongodb.net/money-control?retryWrites=true&w=majority');
+mongoose.connect(connection);
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error"));
 db.once("open", () => {

@@ -20,3 +20,4 @@ yarn-error.log*
 *.sw?
 
 auth_config.json
+credentials.js
