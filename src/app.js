@@ -5,6 +5,7 @@ const morgan = require('morgan')
 const path = require('path');
 const Transaction = require("../models/transaction");
 const Category = require("../models/category");
+const Project = require("../models/project");
 const mongoose = require('mongoose');
 const history = require('connect-history-api-fallback');
 const connection = require('../credentials')
@@ -148,6 +149,59 @@ app.post('/categories', (req, res) => {
     })
   })
 })
+
+// Fetch all Projects
+app.get('/projects', (req, res) => {
+  Project.find({}, 'name active date', function (err, projects) {
+    if (err) { console.error(err); }
+    res.send({
+      projects: projects
+    })
+  })
+  .sort({date:1})
+})
+
+// Add new project
+app.post('/projects', (req, res) => {
+  let request = req.body;
+  var newProject = new Project({
+    name: request.name,
+    active: request.active,
+    date: request.date
+  })
+
+  newProject.save(function (err) {
+    if (err) {
+      console.log(err)
+    }
+    res.send({
+      success: true,
+      message: 'Project saved successfully!'
+    })
+  })
+})
+
+
+// Update proejct
+app.put('/projects/:id', (req, res) => {
+  Project.findById(req.params.id, 'name active date', (error, project) => {
+    if (error) { console.error(error); }
+    let reqBody = req.body;
+    project.name = reqBody.name;
+    project.active = reqBody.active;
+    project.date = reqBody.date;
+    project.save(function (err) {
+      if (err) {
+        res.send(err)
+      }
+      res.send({
+        success: true
+      })
+    })
+  })
+})
+
+
 /*
 const staticFileMiddleware = express.static(__dirname + '/dist/');
 app.use(staticFileMiddleware);
